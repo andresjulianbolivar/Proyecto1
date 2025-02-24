@@ -88,7 +88,15 @@ app.layout = dbc.Container([
                             ]
                         ),
                     ]
-                )
+                ),
+                html.Div(
+                    "Puede acercar o alejar el mapa para ver la distribución de apartamentos en diferentes regiones.",
+                    style={
+                        "text-align": "left",
+                        "font-size": "12px", 
+                        "color": "#666",  
+                        "margin-top": "2px" 
+                    })
             ]
         ))
     ], style={"margin-top": "50px"}),
@@ -137,7 +145,7 @@ app.layout = dbc.Container([
             dbc.Col(
                 dbc.Card(
                     dbc.CardBody([
-                        dbc.Label("Amenities", className="font-weight-bold"),
+                        dbc.Label("Seleccione los Amenities", className="font-weight-bold"),
                         dbc.Checklist(
                             id="amenities-checklist",
                             options=[{"label": amenity, "value": amenity} for amenity in amenities],
@@ -173,7 +181,7 @@ app.layout = dbc.Container([
             ),
             # Título debajo del slider
             html.Div(
-                "Tamaño del apartamento (sq ft)",
+                "Seleccione el rango del tamaño del apartamento (sq ft)",
                 style={
                     "text-align": "center",  # Centrar el texto
                     "margin-top": "10px",  # Espacio entre el slider y el título
@@ -181,7 +189,15 @@ app.layout = dbc.Container([
                     "color": "#333",  # Color del texto
                 }
             )
-        ])
+        ]),
+        html.Div(
+            "Puede modificar los valores en los filtros para observar el comportamiento de los indicadores abajo.",
+            style={
+                "text-align": "left",
+                "font-size": "12px", 
+                "color": "#666",  
+                "margin-top": "2px" 
+            })
     ], style={"margin-top": "20px"}),
 
     # KPIs
@@ -238,20 +254,37 @@ app.layout = dbc.Container([
         dbc.Col(dcc.Graph(id="pie-plot"), width=6),
         dbc.Col([dcc.Graph(id="boxplot"),
                 dcc.RadioItems(
-            id="boxplot-category",
-            options=[
-                {"label": "Tiene fotos", "value": "photos"},
-                {"label": "Permite mascotas", "value": "pets"}
-            ],
-            value="photos",
-            style={"text-align": "center"},
-            inline=True
+                    id="boxplot-category",
+                    options=[
+                        {"label": "Tiene fotos", "value": "photos"},
+                        {"label": "Permite mascotas", "value": "pets"}
+                    ],
+                    value="photos",
+                    style={"text-align": "center"},
+                    inline=True
             
-        )],
+                    ),
+                html.Div(
+                "Seleccione si desea observar la distribución de los precios por presencia de fotos o permisos de mascotas.",
+                style={
+                    "text-align": "left",
+                    "font-size": "12px", 
+                    "color": "#666",  
+                    "margin-top": "2px" 
+                    }
+            )],
             width=6),
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id="amenities-heatmap"))
+        dbc.Col(dcc.Graph(id="amenities-heatmap")),
+        html.Div(
+            "Una correlación cercana a -1 indica una relación inversa fuerte, cercana a 1 indica una relación directa fuerte, y cercana a 0 indica que no hay relación lineal entre la variable y el precio.",
+            style={
+                "text-align": "left",
+                "font-size": "12px", 
+                "color": "#666",  
+                "margin-top": "2px" 
+            })
     ], style={"margin-top": "20px"}),
 
     # Simulador de Precios
