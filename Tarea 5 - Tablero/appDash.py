@@ -276,7 +276,15 @@ app.layout = dbc.Container([
             width=6),
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id="amenities-heatmap"))
+        dbc.Col(dcc.Graph(id="amenities-heatmap")),
+        html.Div(
+            "Una correlación cercana a -1 indica una relación inversa fuerte, cercana a 1 indica una relación directa fuerte, y cercana a 0 indica que no hay relación lineal entre la variable y el precio.",
+            style={
+                "text-align": "left",
+                "font-size": "12px", 
+                "color": "#666",  
+                "margin-top": "2px" 
+            })
     ], style={"margin-top": "20px"}),
 
     # Simulador de Precios
