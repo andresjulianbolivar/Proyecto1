@@ -27,13 +27,33 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(html.H1("Plataforma de Alquileres de Vivienda"), width=12)
     ]),
+    
+    # Mapa
+    dbc.Row([
+        dbc.Col(html.Iframe(
+            srcDoc=open("Tarea 5 - Tablero/mapa_precios.html", "r", encoding="utf-8").read(),
+            width="100%", height="500px", style={"border": "none"}
+        ), width=12)
+    ]),
 
     # Filtros Globales
     dbc.Row([
         dbc.Col(dcc.Dropdown(id="state-dropdown", placeholder="Seleccione un estado", options=[{"label": estado.replace("state_", ""), "value": estado} for estado in estados]), width=3),
         dbc.Col(dcc.Input(id="bathrooms-input", type="number", placeholder="Número de baños", min=1, max=10), width=2),
-        dbc.Col(dcc.Input(id="square-feet-input", type="number", placeholder="Tamaño (sq ft)"), width=2),
         dbc.Col(dcc.Checklist(id="amenities-checklist", options=[{"label": amenity, "value": amenity} for amenity in amenities], inline=True), width=5)
+    ]),
+    
+    # Slider tamaño
+    dbc.Row([
+        dbc.Col(dcc.RangeSlider(
+            id="square-feet-range",
+            min=datos["square_feet"].min(),
+            max=datos["square_feet"].max(),
+            step=100,
+            value=[datos["square_feet"].min(), datos["square_feet"].max()],
+            marks={i: str(i) for i in range(datos["square_feet"].min(), datos["square_feet"].max() + 1, 500)},
+            tooltip={"placement": "bottom", "always_visible": True}
+        ))
     ]),
 
     # KPIs
@@ -47,11 +67,19 @@ app.layout = dbc.Container([
     # Gráficos Descriptivos
     dbc.Row([
         dbc.Col(dcc.Graph(id="heatmap"), width=6),
-        dbc.Col(dcc.Graph(id="boxplot"), width=6)
+        dbc.Col(dcc.Graph(id="boxplot"), width=6),
+        dbc.Col(dcc.RadioItems(
+            id="boxplot-category",
+            options=[
+                {"label": "Tiene fotos", "value": "photos"},
+                {"label": "Permite mascotas", "value": "pets"}
+            ],
+            value="photos",
+            inline=True
+        ), width=4)
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id="source-bar"), width=6),
-        dbc.Col(dcc.Graph(id="amenities-bar"), width=6)
+        dbc.Col(dcc.Graph(id="amenities-bar"))
     ]),
 
     # Simulador de Precios
@@ -75,17 +103,17 @@ app.layout = dbc.Container([
      Output("avg-description-length-kpi", "children")],
     [Input("state-dropdown", "value"),
      Input("bathrooms-input", "value"),
-     Input("square-feet-input", "value"),
+     Input("square-feet-range", "value"),
      Input("amenities-checklist", "value")]
 )
-def update_kpis(state, bathrooms, square_feet, amenities):
+def update_kpis(state, bathrooms, square_feet_range, amenities):
     filtered_data = datos.copy()
     if state:
         filtered_data = filtered_data[filtered_data[state] == 1]
     if bathrooms:
         filtered_data = filtered_data[filtered_data["bathrooms"] == bathrooms]
-    if square_feet:
-        filtered_data = filtered_data[filtered_data["square_feet"] == square_feet]
+    if square_feet_range:
+        filtered_data = filtered_data[(filtered_data["square_feet"] >= square_feet_range[0]) & (filtered_data["square_feet"] <= square_feet_range[1])]
     if amenities:
         for amenity in amenities:
             filtered_data = filtered_data[filtered_data[amenity] == 1]
@@ -101,89 +129,91 @@ def update_kpis(state, bathrooms, square_feet, amenities):
     Output("heatmap", "figure"),
     [Input("state-dropdown", "value"),
      Input("bathrooms-input", "value"),
-     Input("square-feet-input", "value"),
+     Input("square-feet-range", "value"),
      Input("amenities-checklist", "value")]
 )
-def update_heatmap(state, bathrooms, square_feet, amenities):
+def update_heatmap(state, bathrooms, square_feet_range, amenities):
     filtered_data = datos.copy()
     if state:
         filtered_data = filtered_data[filtered_data[state] == 1]
     if bathrooms:
         filtered_data = filtered_data[filtered_data["bathrooms"] == bathrooms]
-    if square_feet:
-        filtered_data = filtered_data[filtered_data["square_feet"] == square_feet]
+    if square_feet_range:
+        filtered_data = filtered_data[(filtered_data["square_feet"] >= square_feet_range[0]) & (filtered_data["square_feet"] <= square_feet_range[1])]
     if amenities:
         for amenity in amenities:
             filtered_data = filtered_data[filtered_data[amenity] == 1]
 
-    fig = px.density_mapbox(filtered_data, lat="latitude", lon="longitude", z="price", radius=10, center=dict(lat=37.76, lon=-122.4), zoom=10, mapbox_style="stamen-terrain")
+    fig = px.density_map(filtered_data, lat="latitude", lon="longitude", z="price", radius=10, center=dict(lat=37.76, lon=-122.4), zoom=10)
     return fig
 
 @app.callback(
     Output("boxplot", "figure"),
     [Input("state-dropdown", "value"),
      Input("bathrooms-input", "value"),
-     Input("square-feet-input", "value"),
-     Input("amenities-checklist", "value")]
+     Input("square-feet-range", "value"),
+     Input("amenities-checklist", "value"),
+     Input("boxplot-category", "value")]  # Nuevo input para elegir categoría
 )
-def update_boxplot(state, bathrooms, square_feet, amenities):
+def update_boxplot(state, bathrooms, square_feet_range, amenities, category):
     filtered_data = datos.copy()
+
     if state:
         filtered_data = filtered_data[filtered_data[state] == 1]
     if bathrooms:
         filtered_data = filtered_data[filtered_data["bathrooms"] == bathrooms]
-    if square_feet:
-        filtered_data = filtered_data[filtered_data["square_feet"] == square_feet]
+    if square_feet_range:
+        filtered_data = filtered_data[(filtered_data["square_feet"] >= square_feet_range[0]) & (filtered_data["square_feet"] <= square_feet_range[1])]
     if amenities:
         for amenity in amenities:
             filtered_data = filtered_data[filtered_data[amenity] == 1]
 
-    fig = px.box(filtered_data, x="has_photo_Yes", y="price", points="all", title="Boxplot de Precios por Presencia de Fotos")
+    # Definir la categoría seleccionada
+    if category == "photos":
+        # Identificar qué columna de fotos tiene un valor de 1 y asignarla a una nueva columna
+        photo_columns = ["has_photo_No", "has_photo_Thumbnail", "has_photo_Yes"]
+        filtered_data["photo_category"] = filtered_data[photo_columns].idxmax(axis=1)
+        x_axis = "photo_category"
+        title = "Boxplot de Precios por Presencia de Fotos"
+    
+    elif category == "pets":
+        # Identificar qué columna de mascotas tiene un valor de 1 y asignarla a una nueva columna
+        pet_columns = ["pets_allowed_Cats", "pets_allowed_Cats,Dogs", "pets_allowed_Dogs", "pets_allowed_No permitido"]
+        filtered_data["pet_category"] = filtered_data[pet_columns].idxmax(axis=1)
+        x_axis = "pet_category"
+        title = "Boxplot de Precios por Permiso de Mascotas"
+    
+    else:
+        return px.box(title="Categoría no disponible en los datos")
+
+    # Crear el boxplot con la categoría seleccionada
+    fig = px.box(filtered_data, x=x_axis, y="price", points="all", title=title)
+
     return fig
 
-@app.callback(
-    Output("source-bar", "figure"),
-    [Input("state-dropdown", "value"),
-     Input("bathrooms-input", "value"),
-     Input("square-feet-input", "value"),
-     Input("amenities-checklist", "value")]
-)
-def update_source_bar(state, bathrooms, square_feet, amenities):
-    filtered_data = datos.copy()
-    if state:
-        filtered_data = filtered_data[filtered_data[state] == 1]
-    if bathrooms:
-        filtered_data = filtered_data[filtered_data["bathrooms"] == bathrooms]
-    if square_feet:
-        filtered_data = filtered_data[filtered_data["square_feet"] == square_feet]
-    if amenities:
-        for amenity in amenities:
-            filtered_data = filtered_data[filtered_data[amenity] == 1]
-
-    fig = px.bar(filtered_data, x=fuentes, y="price", title="Precio Promedio por Fuente")
-    return fig
 
 @app.callback(
     Output("amenities-bar", "figure"),
     [Input("state-dropdown", "value"),
      Input("bathrooms-input", "value"),
-     Input("square-feet-input", "value"),
+     Input("square-feet-range", "value"),
      Input("amenities-checklist", "value")]
 )
-def update_amenities_bar(state, bathrooms, square_feet, amenities):
+def update_amenities_bar(state, bathrooms, square_feet_range, amenities):
     filtered_data = datos.copy()
     if state:
         filtered_data = filtered_data[filtered_data[state] == 1]
     if bathrooms:
         filtered_data = filtered_data[filtered_data["bathrooms"] == bathrooms]
-    if square_feet:
-        filtered_data = filtered_data[filtered_data["square_feet"] == square_feet]
+    if square_feet_range:
+        filtered_data = filtered_data[(filtered_data["square_feet"] >= square_feet_range[0]) & (filtered_data["square_feet"] <= square_feet_range[1])]
     if amenities:
         for amenity in amenities:
             filtered_data = filtered_data[filtered_data[amenity] == 1]
 
     fig = px.bar(filtered_data, x=amenities, y="price", title="Precio Promedio por Amenities")
     return fig
+
 
 @app.callback(
     Output("sim-output", "children"),
