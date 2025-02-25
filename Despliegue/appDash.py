@@ -6,8 +6,8 @@ import plotly.graph_objects as go
 import pandas as pd
 
 # Cargar datos
-datos = pd.read_csv("Tarea 5 - Tablero/datosPreparados.csv")
-coeficientes = pd.read_csv("Tarea 5 - Tablero/modeloFinal.csv")
+datos = pd.read_csv("datosPreparados.csv")
+coeficientes = pd.read_csv("modeloFinal.csv")
 
 # Obtener la lista de ciudades, estados, fuentes, mascotas y amenities
 ciudades = [col for col in datos.columns if col.startswith("cityname_")]
@@ -39,7 +39,7 @@ app.layout = dbc.Container([
             children=[
                 # Mapa
                 html.Iframe(
-                    srcDoc=open("Tarea 5 - Tablero/mapa_precios.html", "r", encoding="utf-8").read(),
+                    srcDoc=open("mapa_precios.html", "r", encoding="utf-8").read(),
                     style={
                         "width": "100%",
                         "height": "100%",
@@ -65,7 +65,7 @@ app.layout = dbc.Container([
                         # Cuadro degradado
                         html.Div(
                             style={
-                                "background": "linear-gradient(to left, blue, green, yellow, red)",  # Degradado
+                                "background": "linear-gradient(to right, blue, green, yellow, red)",  # Degradado
                                 "height": "20px",  # Alto del cuadro degradado
                                 "border-radius": "5px",  # Bordes redondeados
                                 "margin-bottom": "10px",  # Espacio debajo del cuadro
@@ -79,7 +79,7 @@ app.layout = dbc.Container([
                             },
                             children=[
                                 html.Div(
-                                    "Mayor concentración de apartamentos",
+                                    "Precios más altos",
                                     style={
                                         "font-size": "12px",
                                         "color": "red",
@@ -88,7 +88,15 @@ app.layout = dbc.Container([
                             ]
                         ),
                     ]
-                )
+                ),
+                html.Div(
+                    "Puede acercar o alejar el mapa para ver la distribución de precios en diferentes regiones.",
+                    style={
+                        "text-align": "left",
+                        "font-size": "12px", 
+                        "color": "#666",  
+                        "margin-top": "2px" 
+                    })
             ]
         ))
     ], style={"margin-top": "50px"}),
@@ -137,7 +145,7 @@ app.layout = dbc.Container([
             dbc.Col(
                 dbc.Card(
                     dbc.CardBody([
-                        dbc.Label("Amenities", className="font-weight-bold"),
+                        dbc.Label("Seleccione los Amenities", className="font-weight-bold"),
                         dbc.Checklist(
                             id="amenities-checklist",
                             options=[{"label": amenity, "value": amenity} for amenity in amenities],
@@ -173,7 +181,7 @@ app.layout = dbc.Container([
             ),
             # Título debajo del slider
             html.Div(
-                "Tamaño del apartamento (sq ft)",
+                "Seleccione el rango del tamaño del apartamento (sq ft)",
                 style={
                     "text-align": "center",  # Centrar el texto
                     "margin-top": "10px",  # Espacio entre el slider y el título
@@ -181,7 +189,15 @@ app.layout = dbc.Container([
                     "color": "#333",  # Color del texto
                 }
             )
-        ])
+        ]),
+        html.Div(
+            "Puede modificar los valores en los filtros para observar el comportamiento de los indicadores abajo.",
+            style={
+                "text-align": "left",
+                "font-size": "12px", 
+                "color": "#666",  
+                "margin-top": "2px" 
+            })
     ], style={"margin-top": "20px"}),
 
     # KPIs
@@ -238,20 +254,37 @@ app.layout = dbc.Container([
         dbc.Col(dcc.Graph(id="pie-plot"), width=6),
         dbc.Col([dcc.Graph(id="boxplot"),
                 dcc.RadioItems(
-            id="boxplot-category",
-            options=[
-                {"label": "Tiene fotos", "value": "photos"},
-                {"label": "Permite mascotas", "value": "pets"}
-            ],
-            value="photos",
-            style={"text-align": "center"},
-            inline=True
+                    id="boxplot-category",
+                    options=[
+                        {"label": "Tiene fotos", "value": "photos"},
+                        {"label": "Permite mascotas", "value": "pets"}
+                    ],
+                    value="photos",
+                    style={"text-align": "center"},
+                    inline=True
             
-        )],
+                    ),
+                html.Div(
+                "Seleccione si desea observar la distribución de los precios por presencia de fotos o permisos de mascotas.",
+                style={
+                    "text-align": "left",
+                    "font-size": "12px", 
+                    "color": "#666",  
+                    "margin-top": "2px" 
+                    }
+            )],
             width=6),
     ]),
     dbc.Row([
-        dbc.Col(dcc.Graph(id="amenities-heatmap"))
+        dbc.Col(dcc.Graph(id="amenities-heatmap")),
+        html.Div(
+            "Una correlación cercana a -1 indica una relación inversa fuerte, cercana a 1 indica una relación directa fuerte, y cercana a 0 indica que no hay relación lineal entre la variable y el precio.",
+            style={
+                "text-align": "left",
+                "font-size": "12px", 
+                "color": "#666",  
+                "margin-top": "2px" 
+            })
     ], style={"margin-top": "20px"}),
 
     # Simulador de Precios
@@ -605,4 +638,4 @@ def update_simulator(bathrooms, square_feet, city, amenities):
 
 # Ejecutar la aplicación
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0', port = 8050)

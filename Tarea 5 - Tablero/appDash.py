@@ -6,8 +6,8 @@ import plotly.graph_objects as go
 import pandas as pd
 
 # Cargar datos
-datos = pd.read_csv("Tarea 5 - Tablero/datosPreparados.csv")
-coeficientes = pd.read_csv("Tarea 5 - Tablero/modeloFinal.csv")
+datos = pd.read_csv("datosPreparados.csv")
+coeficientes = pd.read_csv("modeloFinal.csv")
 
 # Obtener la lista de ciudades, estados, fuentes, mascotas y amenities
 ciudades = [col for col in datos.columns if col.startswith("cityname_")]
@@ -39,7 +39,7 @@ app.layout = dbc.Container([
             children=[
                 # Mapa
                 html.Iframe(
-                    srcDoc=open("Tarea 5 - Tablero/mapa_precios.html", "r", encoding="utf-8").read(),
+                    srcDoc=open("mapa_precios.html", "r", encoding="utf-8").read(),
                     style={
                         "width": "100%",
                         "height": "100%",
@@ -638,4 +638,4 @@ def update_simulator(bathrooms, square_feet, city, amenities):
 
 # Ejecutar la aplicación
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0', port = 8050)
