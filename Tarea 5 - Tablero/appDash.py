@@ -65,7 +65,7 @@ app.layout = dbc.Container([
                         # Cuadro degradado
                         html.Div(
                             style={
-                                "background": "linear-gradient(to left, blue, green, yellow, red)",  # Degradado
+                                "background": "linear-gradient(to right, blue, green, yellow, red)",  # Degradado
                                 "height": "20px",  # Alto del cuadro degradado
                                 "border-radius": "5px",  # Bordes redondeados
                                 "margin-bottom": "10px",  # Espacio debajo del cuadro
@@ -79,7 +79,7 @@ app.layout = dbc.Container([
                             },
                             children=[
                                 html.Div(
-                                    "Mayor concentración de apartamentos",
+                                    "Precios más altos",
                                     style={
                                         "font-size": "12px",
                                         "color": "red",
@@ -90,7 +90,7 @@ app.layout = dbc.Container([
                     ]
                 ),
                 html.Div(
-                    "Puede acercar o alejar el mapa para ver la distribución de apartamentos en diferentes regiones.",
+                    "Puede acercar o alejar el mapa para ver la distribución de precios en diferentes regiones.",
                     style={
                         "text-align": "left",
                         "font-size": "12px", 
