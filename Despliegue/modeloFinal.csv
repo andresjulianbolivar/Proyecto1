@@ -1,0 +1,53 @@
+Variables,Coeficientes
+bathrooms,297.19491419868285
+square_feet,0.6366846491494381
+cityname_Austin,259.1129062573197
+cityname_Bellevue,766.601035826881
+cityname_Berlin,9.836576556417587e-12
+cityname_Beverly Hills,5.555381627539832e-12
+cityname_Boston,1039.6611989126611
+cityname_Chicago,611.2996674486534
+cityname_Chula Vista,-591.2922469933459
+cityname_Corona,-567.198190495517
+cityname_Crowley,-629.4609787375409
+cityname_Detroit,1518.218462159024
+cityname_Evanston,582.9036282717201
+cityname_Fond Du Lac,-500.5233838092585
+cityname_Ingalls,-1032.571402304446
+cityname_Jersey City,2.238658075823386e-12
+cityname_Los Angeles,882.078201104294
+cityname_Maricopa,-1382.7161183949167
+cityname_Miami,1293.348712553606
+cityname_Miami Beach,3884.9542060105705
+cityname_Moreno Valley,-610.4410621400639
+cityname_Mountain View,7.455009120347074e-13
+cityname_New Bern,-7.699334479125662e-13
+cityname_Oakland,944.2232912135304
+cityname_Odessa,354.60534737942805
+cityname_Palo Alto,2.492978370107434e-13
+cityname_Providence,412.01786590488075
+cityname_Ramona,2.83048384535531e-13
+cityname_Redmond,6.591344511069013e-14
+cityname_Ripon,-658.4982237798209
+cityname_San Francisco,1517.6029474341378
+cityname_Santa Monica,3.1227733399767764e-13
+cityname_Seattle,1245.1462068824173
+cityname_Sleepy Hollow,-5.976696683825359e-14
+cityname_State College,1347.6567280693396
+cityname_Washington,513.3392626678741
+cityname_West Hollywood,5.669905463237478e-14
+cityname_Wildomar,1.0947614929377144e-13
+cityname_Woodland Hills,-661.9589129048421
+cityname_Yonkers,1185.9572366609286
+state_CA,1099.2348452736776
+state_DC,513.3392626678781
+state_MA,851.7998050478716
+state_NJ,568.1141689755756
+state_VA,581.5841093822004
+Elevator,251.1930144710353
+Clubhouse,50.78495715235734
+Parking,160.13931935370934
+Playground,-87.51470430284112
+Internet Access,86.6327185048433
+Garbage Disposal,-91.06921202021972
+Pool,87.19850857859029
